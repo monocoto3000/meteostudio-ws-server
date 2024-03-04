@@ -1,23 +1,33 @@
 import express from 'express';
 import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+import cors from 'cors';
 
 const app = express();
-const server = http.createServer(app);
-const io = new SocketIOServer(server);
+app.use(cors());
 
-io.on('connection', (socket) => {
-    console.log('Usuario conectado');
-    socket.on('getData', (data) => {
-        console.log('Datos recibidos:', data);
-        io.emit('nuevoDato', data);
-    });
-    socket.on('disconnect', () => {
-        console.log('Usuario desconectado');
-    });
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
-const PORT = process.env.PORT || 3004;
-server.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+interface ApprovedPayment {
+  name: string;
+  concept: string;
+  price: number;
+}
+
+io.on('connection', (socket: Socket) => {
+  socket.on('deliverData', (data: ApprovedPayment) => {
+    console.log(data);
+    io.emit('newMessage', data);
+  });
+});
+
+server.listen(4000, () => {
+  console.log('Listening on port 4000');
 });
