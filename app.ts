@@ -1,7 +1,7 @@
-import express from 'express';
-import http from 'http';
+import * as express from 'express';
+import * as http from 'http';
 import { Server, Socket } from 'socket.io';
-import cors from 'cors';
+import * as cors from 'cors';
 
 const app = express();
 app.use(cors());
@@ -22,8 +22,9 @@ interface ApprovedPayment {
 }
 
 io.on('connection', (socket: Socket) => {
+  console.log("Error de conexion")
   socket.on('deliverData', (data: ApprovedPayment) => {
-    console.log(data);
+    console.log('Datos recibidos:', data);
     io.emit('newMessage', data);
   });
 });
