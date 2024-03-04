@@ -1,39 +1,23 @@
-import cors from "cors";
-import express from "express";
-import { createServer } from "node:http";
-import { Server } from "socket.io";
-import { EventsSocket } from "./entities/eventTypes";
+import express from 'express';
+import http from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 
 const app = express();
+const server = http.createServer(app);
+const io = new SocketIOServer(server);
 
-app.use(cors());
-app.use(express.json());
-app.set("port", process.env.PORT || 5000);
-
-app.get("/", (req, res) => {
-  res.status(200).send("Bienvenido");
+io.on('connection', (socket) => {
+    console.log('Usuario conectado');
+    socket.on('getData', (data) => {
+        console.log('Datos recibidos:', data);
+        io.emit('nuevoDato', data);
+    });
+    socket.on('disconnect', () => {
+        console.log('Usuario desconectado');
+    });
 });
 
-app.use("*", (req, res) => {
-  res.send("Ruta inexistente");
-});
-
-const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
-  },
-});
-
-io.on(EventsSocket.CONNECTION, (socket) => {
-  
-  socket.on(EventsSocket.SEND_PAYMENTCONFIRMATION, (data: any) => {
-    console.log(data)
-    io.emit(EventsSocket.GET_PAYMENT, data);
-  });
-});
-
-server.listen(app.get("port"), () => {
-  console.log("Servidor corriendo en puerto", app.get("port"));
+const PORT = process.env.PORT || 3004;
+server.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
