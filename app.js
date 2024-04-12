@@ -14,9 +14,9 @@ var io = new socket_io_1.Server(server, {
     }
 });
 io.on('connection', function (socket) {
-    console.log("Error de conexion");
+    console.log("Cliente conectado");
     socket.on('deliverData', function (data) {
-        console.log('Datos recibidos en el servidor:', data);
+        console.log('Datos recibidos:', data);
         io.emit('newMessage', data);
     });
 });
