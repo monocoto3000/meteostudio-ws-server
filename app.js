@@ -14,12 +14,16 @@ var io = new socket_io_1.Server(server, {
     }
 });
 io.on('connection', function (socket) {
-    console.log("Cliente conectado");
-    socket.on('deliverData', function (data) {
-        console.log('Datos recibidos:', data);
-        io.emit('newMessage', data);
+    console.log('Cliente WebSocket conectado');
+    socket.on('rtdata', function (data) {
+        console.log('Datos de rtdata recibidos:', data);
+        io.emit('rtdata', data);
+    });
+    socket.on('averages', function (data) {
+        console.log('Datos de averages recibidos:', data);
+        io.emit('averages', data);
     });
 });
 server.listen(4000, function () {
-    console.log('Listening on port 4000');
+    console.log('Servidor WebSocket escuchando en el puerto 4000');
 });
