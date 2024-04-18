@@ -3,6 +3,7 @@ import * as http from 'http';
 import { Server } from 'socket.io';
 import router from './src/routes/routes';
 import { WebSocketHandler } from './src/handler/socket.handler';
+import { socketioAuthMiddleware } from './src/middlewares/auth.middleware';
 import * as cors from 'cors';
 
 const app = express();
@@ -18,6 +19,8 @@ const io = new Server(server, {
 });
 
 app.use('/api', router);
+
+io.use(socketioAuthMiddleware);
 
 const websocketHandler = new WebSocketHandler(io);
 

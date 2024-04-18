@@ -5,6 +5,7 @@ var http = require("http");
 var socket_io_1 = require("socket.io");
 var routes_1 = require("./src/routes/routes");
 var socket_handler_1 = require("./src/handler/socket.handler");
+var auth_middleware_1 = require("./src/middlewares/auth.middleware");
 var cors = require("cors");
 var app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ var io = new socket_io_1.Server(server, {
     }
 });
 app.use('/api', routes_1.default);
+io.use(auth_middleware_1.socketioAuthMiddleware);
 var websocketHandler = new socket_handler_1.WebSocketHandler(io);
 var PORT = 4000;
 server.listen(PORT, function () {
